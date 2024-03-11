@@ -1,7 +1,7 @@
 package _1_2_Sorting;
 
 public class Shell extends AbstractSort {
-	public static <T extends Comparable<T>> void sort(T[] a) {
+	public static <T extends Comparable<? super T>> void sort(T[] a) {
 		int h = 1;
 		while (h < a.length/3)
 			h = h*3 + 1;

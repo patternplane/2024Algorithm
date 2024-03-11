@@ -2,9 +2,9 @@ package _1_2_Sorting;
 
 import java.util.Arrays;
 
-public class MainClass {
+public class RunPractice {
 
-	public static void main(String[] args) {
+	public static void Run() {
 		Integer[] test = new Integer[] {1,6,3,2,7,5,4,9,8,12,11,10};
 		
 		Selection sort1 = new Selection();

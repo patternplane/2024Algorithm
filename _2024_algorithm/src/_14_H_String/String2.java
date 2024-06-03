@@ -44,7 +44,7 @@ public class String2 {
 		if (ipNumbers.length <= maxDotSelection)
 			return new String[0];
 
-		java.util.TreeSet<String> answer = new java.util.TreeSet<String>();
+		TST answer = new TST();
 		java.util.Stack<Integer> dotIndexes = new java.util.Stack<Integer>();
 		java.util.Stack<Integer> ipUnits = new java.util.Stack<Integer>();
 		dotIndexes.add(-1);
@@ -94,22 +94,22 @@ public class String2 {
 			}
 		}
 
-		return answer.toArray(new String[answer.size()]);
+		return answer.toArray();
 	}
 
 	static java.util.Stack<Integer> r_IPUnits;
-	static java.util.TreeSet<String> r_IPs;
+	static TST r_IPs;
 	static char[] r_IPNumStr;
 
 	static String[] solutionByRecursive(char[] ipNumbers) {
 		r_IPUnits = new java.util.Stack<Integer>();
-		r_IPs = new java.util.TreeSet<String>();
+		r_IPs = new TST();
 		r_IPNumStr = ipNumbers;
 
 		getIP(0, 4);
 
 		r_IPUnits = null;
-		String[] answer = r_IPs.toArray(new String[r_IPs.size()]);
+		String[] answer = r_IPs.toArray();
 		r_IPs = null;
 		r_IPNumStr = null;
 
@@ -143,5 +143,94 @@ public class String2 {
 				}
 			}
 		}
+	}
+}
+
+class TST {
+	private TSTNode root = null;
+	private int n = 0;
+	private int maxLen = 0;
+
+	public void add(String value) {
+		if (root == null && value.length() > 0)
+			root = new TSTNode(value.charAt(0));
+		TSTNode node = root;
+		for (int i = 0, size = value.length(); i < size;) {
+			if (node.c == value.charAt(i)) {
+				if (i == size - 1) {
+					if (!node.isFinal)
+						n++;
+					node.isFinal = true;
+					if (maxLen < size)
+						maxLen = size;
+				} else {
+					if (node.same == null)
+						node.same = new TSTNode(value.charAt(i + 1));
+					node = node.same;
+				}
+				i++;
+			} else if (node.c < value.charAt(i)) {
+				if (node.next == null)
+					node.next = new TSTNode(value.charAt(i));
+				node = node.next;
+			} else {
+				if (node.previous == null)
+					node.previous = new TSTNode(value.charAt(i));
+				node = node.previous;
+			}
+		}
+	}
+
+	private String[] r_result = null;
+	private char[] r_CharA = null;
+	private int r_charIdx = 0;
+	private int r_idx = 0;
+
+	public String[] toArray() {
+		String[] result = new String[n];
+		r_result = result;
+		r_CharA = new char[maxLen];
+		r_charIdx = 0;
+		r_idx = 0;
+
+		getStringRecursive(root);
+
+		r_result = null;
+		r_CharA = null;
+		r_charIdx = 0;
+		r_idx = 0;
+		return result;
+	}
+
+	private void getStringRecursive(TSTNode root) {
+		if (root == null)
+			return;
+
+		if (root.previous != null)
+			getStringRecursive(root.previous);
+		r_CharA[r_charIdx++] = root.c;
+		if (root.isFinal == true)
+			r_result[r_idx++] = new String(r_CharA, 0, r_charIdx);
+		if (root.same != null)
+			getStringRecursive(root.same);
+		r_charIdx--;
+		if (root.next != null)
+			getStringRecursive(root.next);
+	}
+}
+
+class TSTNode {
+	public char c;
+	public boolean isFinal;
+	public TSTNode previous;
+	public TSTNode same;
+	public TSTNode next;
+
+	public TSTNode(char c) {
+		this.c = c;
+		this.isFinal = false;
+		this.previous = null;
+		this.same = null;
+		this.next = null;
 	}
 }
